@@ -1,6 +1,6 @@
-import express from 'express';
-import fetch from 'node-fetch';
-import cors from 'cors';
+import express from "express";
+import cors from "cors";
+import fetch from "node-fetch";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -8,25 +8,28 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-app.post('/api/terabox', async (req, res) => {
+app.post("/api/terabox", async (req, res) => {
+  const { url } = req.body;
+
   try {
-    const apiResponse = await fetch("https://edfr68qfrnt.teraboxfast.com", {
+    const response = await fetch("https://edfr68qfrnt.teraboxfast.com", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(req.body)
+      body: JSON.stringify({
+        url: url,
+        key: "7XJvHr93qsOtLym"
+      })
     });
 
-    const data = await apiResponse.json();
+    const data = await response.json();
     res.json(data);
   } catch (err) {
-    res.status(500).json({ error: "Proxy error", message: err.message });
+    res.status(500).json({ error: "Proxy failed", details: err.message });
   }
 });
 
-app.get("/", (req, res) => res.send("TeraBox Proxy Running"));
-
 app.listen(PORT, () => {
-  console.log(`Proxy running on port ${PORT}`);
+  console.log(`Proxy server running on port ${PORT}`);
 });
